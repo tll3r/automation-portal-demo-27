@@ -1,3 +1,3 @@
 ---
-ansible_user: ansible
+# Override ansible_user via AAP credentials, not in source control
 ansible_become: true

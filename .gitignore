@@ -2,5 +2,11 @@
 *.pyc
 __pycache__/
 .vault_pass
+vault_pass*
 *.log
 .env
+*.pem
+*.key
+*_credentials*
+*_secret*
+inventory_local*
