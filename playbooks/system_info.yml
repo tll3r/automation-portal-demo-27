@@ -1,0 +1,30 @@
+---
+- name: Gather System Information
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Display OS information
+      ansible.builtin.debug:
+        msg:
+          - "Hostname: {{ ansible_hostname }}"
+          - "OS: {{ ansible_distribution }} {{ ansible_distribution_version }}"
+          - "Kernel: {{ ansible_kernel }}"
+          - "Architecture: {{ ansible_architecture }}"
+          - "CPUs: {{ ansible_processor_vcpus }}"
+          - "Memory: {{ ansible_memtotal_mb }} MB"
+
+    - name: Display network information
+      ansible.builtin.debug:
+        msg:
+          - "Default IPv4: {{ ansible_default_ipv4.address | default('N/A') }}"
+          - "Default Interface: {{ ansible_default_ipv4.interface | default('N/A') }}"
+
+    - name: Check disk usage
+      ansible.builtin.command: df -h /
+      register: disk_usage
+      changed_when: false
+
+    - name: Show disk usage
+      ansible.builtin.debug:
+        var: disk_usage.stdout_lines

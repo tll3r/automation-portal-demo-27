@@ -1,0 +1,26 @@
+---
+- name: Service Management Demo
+  hosts: all
+  gather_facts: true
+  become: true
+
+  vars:
+    services_to_check:
+      - sshd
+      - firewalld
+      - chronyd
+
+  tasks:
+    - name: Gather service facts
+      ansible.builtin.service_facts:
+
+    - name: Display service status
+      ansible.builtin.debug:
+        msg: "{{ item }}: {{ ansible_facts.services[item + '.service'].state | default('not found') }}"
+      loop: "{{ services_to_check }}"
+
+    - name: Ensure chronyd is running
+      ansible.builtin.systemd:
+        name: chronyd
+        state: started
+        enabled: true

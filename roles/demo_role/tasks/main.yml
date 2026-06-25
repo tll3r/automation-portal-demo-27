@@ -1,0 +1,19 @@
+---
+- name: Display role variables
+  ansible.builtin.debug:
+    msg: "Running demo_role with message: {{ demo_message }}"
+
+- name: Create demo file
+  ansible.builtin.template:
+    src: demo.conf.j2
+    dest: /tmp/demo.conf
+    mode: "0644"
+
+- name: Verify demo file
+  ansible.builtin.stat:
+    path: /tmp/demo.conf
+  register: demo_file
+
+- name: Show file info
+  ansible.builtin.debug:
+    msg: "Demo file created: size={{ demo_file.stat.size }} bytes"

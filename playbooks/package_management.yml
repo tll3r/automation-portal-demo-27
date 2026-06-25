@@ -1,0 +1,29 @@
+---
+- name: Package Management Demo
+  hosts: all
+  gather_facts: true
+  become: true
+
+  vars:
+    packages_to_check:
+      - vim-enhanced
+      - tree
+      - wget
+      - curl
+
+  tasks:
+    - name: Ensure common packages are installed
+      ansible.builtin.dnf:
+        name: "{{ packages_to_check }}"
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: Display installed package versions
+      ansible.builtin.package_facts:
+        manager: auto
+
+    - name: Show versions of managed packages
+      ansible.builtin.debug:
+        msg: "{{ item }}: {{ ansible_facts.packages[item][0].version | default('not installed') }}"
+      loop: "{{ packages_to_check }}"
+      when: item in ansible_facts.packages

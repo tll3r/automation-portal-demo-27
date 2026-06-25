@@ -1,0 +1,34 @@
+---
+- name: Firewall Management Demo
+  hosts: all
+  gather_facts: false
+  become: true
+
+  vars:
+    firewall_services:
+      - http
+      - https
+
+  tasks:
+    - name: Ensure firewalld is running
+      ansible.builtin.systemd:
+        name: firewalld
+        state: started
+        enabled: true
+
+    - name: Allow services through firewall
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: true
+        immediate: true
+        state: enabled
+      loop: "{{ firewall_services }}"
+
+    - name: List active firewall rules
+      ansible.builtin.command: firewall-cmd --list-all
+      register: fw_rules
+      changed_when: false
+
+    - name: Display firewall rules
+      ansible.builtin.debug:
+        var: fw_rules.stdout_lines

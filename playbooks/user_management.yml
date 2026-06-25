@@ -1,0 +1,37 @@
+---
+- name: User Management Demo
+  hosts: all
+  gather_facts: false
+  become: true
+
+  vars:
+    demo_users:
+      - name: demo_user1
+        comment: "Demo User 1"
+        groups: wheel
+      - name: demo_user2
+        comment: "Demo User 2"
+        groups: users
+
+  tasks:
+    - name: Ensure demo users exist
+      ansible.builtin.user:
+        name: "{{ item.name }}"
+        comment: "{{ item.comment }}"
+        groups: "{{ item.groups }}"
+        state: present
+        create_home: true
+      loop: "{{ demo_users }}"
+
+    - name: Verify user creation
+      ansible.builtin.command: "id {{ item.name }}"
+      loop: "{{ demo_users }}"
+      register: user_info
+      changed_when: false
+
+    - name: Show user details
+      ansible.builtin.debug:
+        msg: "{{ item.stdout }}"
+      loop: "{{ user_info.results }}"
+      loop_control:
+        label: "{{ item.item.name }}"

@@ -1,0 +1,13 @@
+---
+- name: Hello World Demo
+  hosts: all
+  gather_facts: true
+
+  tasks:
+    - name: Print hello message
+      ansible.builtin.debug:
+        msg: "Hello from {{ inventory_hostname }} running {{ ansible_distribution }} {{ ansible_distribution_version }}"
+
+    - name: Show current date and time
+      ansible.builtin.debug:
+        msg: "Current time is {{ ansible_date_time.iso8601 }}"
